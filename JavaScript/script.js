@@ -11,48 +11,55 @@ document.addEventListener('DOMContentLoaded', () => {
     //     });
     // });
 
-
-
-
-    faqs.forEach((faq, index) => {
-        const questionDt = faq.querySelector('.question');
-        const iconImg = questionDt.querySelector('img');
-        // この変数は現在のロジックでは直接使っていないが、要素の取得として残しておく。
-        const answerDd = faq.querySelector('.answer');
-
-        // 初期状態の設定
-        if (index === 0) {
-            // 最初のFAQ項目は開いた状態にする
-            faq.classList.add('active'); // active クラスを追加
-            iconImg.src = './assets/images/icon-minus.svg'; // アイコンをマイナスに
-            iconImg.alt = 'マイナス記号'; // alt テキストを更新
-            questionDt.setAttribute('aria-expanded', 'true'); // aria-expanded を true に
-        } else {
-            // 2番目以降のFAQ項目は閉じた状態にする
-            faq.classList.remove('active'); // 念のため active クラスを削除
-            iconImg.src = './assets/images/icon-plus.svg'; // アイコンをプラスに
-            iconImg.alt = 'プラス記号'; // alt テキストを更新
-            questionDt.setAttribute('aria-expanded', 'false'); // aria-expanded を false に
-        }
-
-        // クリックイベントリスナー
-        questionDt.addEventListener('click', () => {
-            // faq 要素に 'active' クラスをトグル
-            faq.classList.toggle('active');
-
-            // 'active' クラスの状態に基づいてアイコンとaria-expandedを更新
-            // このif-elseブロックが、全てのFAQ項目でアイコンを切り替える役割を担っています。
-            if (faq.classList.contains('active')) {
-                // 'active' クラスがある場合（開いている状態）
+    
+        faqs.forEach((faq, index) => {
+            const questionDt = faq.querySelector('.question');
+            const iconImg = questionDt.querySelector('img');
+            const answerDd = faq.querySelector('.answer');
+    
+            // --- 初期状態の設定 ---
+            if (index === 0) {
+                faq.classList.add('active');
                 iconImg.src = './assets/images/icon-minus.svg';
                 iconImg.alt = 'マイナス記号';
                 questionDt.setAttribute('aria-expanded', 'true');
             } else {
-                // 'active' クラスがない場合（閉じている状態）
+                faq.classList.remove('active');
                 iconImg.src = './assets/images/icon-plus.svg';
                 iconImg.alt = 'プラス記号';
                 questionDt.setAttribute('aria-expanded', 'false');
             }
+    
+            // --- クリックイベントリスナー ---
+            questionDt.addEventListener('click', () => {
+                const isActive = faq.classList.contains('active'); // クリック前の状態をチェック
+    
+                // まず、既存のアニメーションクラスを全て削除
+                iconImg.classList.remove('rotate-in', 'rotate-out');
+    
+                // 'active' クラスをトグル
+                faq.classList.toggle('active');
+    
+                // 'active' クラスの新しい状態に基づいてアニメーションとアイコンを更新
+                if (faq.classList.contains('active')) {
+                    // 開く場合
+                    iconImg.src = './assets/images/icon-minus.svg';
+                    iconImg.alt = 'マイナス記号';
+                    questionDt.setAttribute('aria-expanded', 'true');
+                    iconImg.classList.add('rotate-in'); // 開くアニメーションを適用
+                } else {
+                    // 閉じる場合
+                    iconImg.src = './assets/images/icon-plus.svg';
+                    iconImg.alt = 'プラス記号';
+                    questionDt.setAttribute('aria-expanded', 'false');
+                    iconImg.classList.add('rotate-out'); // 閉じるアニメーションを適用
+                }
+    
+                // アニメーション終了後にアニメーションクラスを削除し、次回のクリックに備える
+                // アニメーションの時間（0.5秒）に合わせてsetTimeoutを設定
+                setTimeout(() => {
+                    iconImg.classList.remove('rotate-in', 'rotate-out');
+                }, 500); // CSSアニメーションの時間と同じミリ秒を指定
+            });
         });
     });
-});
